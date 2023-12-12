@@ -1,4 +1,4 @@
 ---
 layout: home
-title: From Protests to Pixels
+title: Test1
 ---
