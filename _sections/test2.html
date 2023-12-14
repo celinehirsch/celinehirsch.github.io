@@ -53,11 +53,19 @@ title: Test 2
           var parts = data.split('---');
           var frontMatter = jsyaml.load(parts[1].trim());
 
-          // Load the HTML content into the modal
-          $(modalId + ' .modal-content').load(
-            'path/to/modal_layout.html', // Adjust the path as needed
-            { page: frontMatter }
-          );
+          // Load modal layout content
+          $.ajax({
+            url: 'path/to/modal_layout.html', // Adjust the path as needed
+            success: function(modalLayout) {
+              // Populate the modal with the loaded HTML
+              $(modalId + ' .modal-content').html(modalLayout);
+              // Update modal content with front matter data
+              $('#modalTitle').text(frontMatter.title);
+              $('#modalSubtitle').text(frontMatter.subtitle);
+              $('#modalDescription').html(frontMatter.description);
+              // Add other fields as needed
+            }
+          });
         }
       });
     }
