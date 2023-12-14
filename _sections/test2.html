@@ -51,7 +51,28 @@ title: Test 2
       $.ajax({
         url: markdownFile,
         success: function(data) {
-          $(modalId + ' .modal-content').html(data);
+          // Parse YAML front matter and content
+          var parts = data.split('---');
+          var frontMatter = jsyaml.load(parts[1].trim());
+
+          // Extract information from front matter
+          var title = frontMatter.title || '';
+          var subtitle = frontMatter.subtitle || '';
+          var description = frontMatter.description || '';
+
+          // Update modal content
+          $(modalId + ' .modal-content').html(`
+            <div class="modal-header">
+              <h5 class="modal-title">${title}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <h6>${subtitle}</h6>
+              <p>${description}</p>
+            </div>
+          `);
         }
       });
     }
@@ -64,6 +85,7 @@ title: Test 2
     // Repeat for other modals...
   });
 </script>
+
 
 </body>
 </html>
