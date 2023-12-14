@@ -1,0 +1,80 @@
+---
+layout: home
+order: 7
+title: Test 3
+---
+
+<!-- Your other HTML content -->
+
+<div class="row">
+  {% assign posts_sorted = site.posts | sort: 'date' | reverse %}
+  {% for post in posts_sorted %}
+    <div class="col-md-4 col-sm-6 portfolio-item">
+      <a href="#" class="portfolio-link" data-toggle="modal" data-target="#{{ post.slug }}Modal">
+        <div class="portfolio-hover">
+          <div class="portfolio-hover-content">
+            <i class="fa fa-plus fa-3x"></i>
+          </div>
+        </div>
+        <!-- 400x289 pixels-->
+        <img src="{{ post.thumbnail }}" class="img-responsive img-centered" alt="{{ post.title }}">
+      </a>
+      <div class="portfolio-caption">
+        <h4>{{ post.title }}</h4>
+        <p class="text-muted">{{ post.subtitle }}</p>
+      </div>
+    </div>
+
+    <!-- Modal for each post -->
+    <div class="modal fade" id="{{ post.slug }}Modal" tabindex="-1" role="dialog" aria-labelledby="{{ post.slug }}ModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <!-- Modal content will be loaded here using JavaScript -->
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Your other HTML content -->
+
+<!-- Add the Bootstrap JS and jQuery scripts here -->
+
+<script src="path/to/jquery.min.js"></script>
+<script src="path/to/bootstrap.min.js"></script>
+
+<!-- Your custom JavaScript to load modal content from Markdown -->
+<script>
+  $(document).ready(function() {
+    {% for post in posts_sorted %}
+      // Load modal content when modal is shown
+      $('#{{ post.slug }}Modal').on('shown.bs.modal', function() {
+        loadModalContent('#{{ post.slug }}Modal', '{{ post.url | relative_url }}');
+      });
+    {% endfor %}
+
+    function loadModalContent(modalId, markdownFile) {
+      $.ajax({
+        url: markdownFile,
+        success: function(data) {
+          var parts = data.split('---');
+          var frontMatter = jsyaml.load(parts[1].trim());
+
+          // Load modal layout content
+          $.ajax({
+            url: 'path/to/modal_layout.html', // Adjust the path as needed
+            success: function(modalLayout) {
+              // Populate the modal with the loaded HTML
+              $(modalId + ' .modal-content').html(modalLayout);
+              // Update modal content with front matter data
+              $('#modalTitle').text(frontMatter.title);
+              $('#modalSubtitle').text(frontMatter.subtitle);
+              $('#modalDescription').html(frontMatter.description);
+              // Add other fields as needed
+            }
+          });
+        }
+      });
+    }
+  });
+</script>
